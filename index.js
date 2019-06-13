@@ -98,7 +98,7 @@ function requestHanlder(req, res, next) {
 
   if (!resData) {
     if (urlPath && urlPath !== '/') {
-      const fileDir = path.join(MOCKDIR, urlPath + suffix ? `.${suffix}` : '');
+      const fileDir = path.join(MOCKDIR, urlPath + (suffix ? `.${suffix}` : ''));
       res.sendFile(fileDir, err => {
         delayRes(() => {
           err && res.status(err.status).end();
