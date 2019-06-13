@@ -109,7 +109,10 @@ module.exports = {
   /* value is function */
   /* 值可以是一个函数，参数是请求对象和路径参数对象 */
   '/bbb/:id': (req, params) => {
-    // params is `{ id: 1 }` is request url is '/api-mock/bbb/1'
+    /* req.body has parsed by `body-parser`, so you can get json/urlencode params
+     * params is `{ id: 1 }` is request url is '/api-mock/bbb/1'
+     */
+    /* req.body 已经经过`body-parser`解析, 可以获取到通过json格式或urlencode格式发送的数据 */
     return params
   },
   /* value is special object contains $[method] keys. request will auto match method。used for restful apis */

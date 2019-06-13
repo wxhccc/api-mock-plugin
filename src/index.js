@@ -1,6 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import pathToRegexp from 'path-to-regexp'
+import bodyParser from 'body-parser'
 /** check whether the param provided is plain object  **/
 function isPlainObject (obj) {
   return obj instanceof Object || Object.getPrototypeOf(obj) === null
@@ -86,13 +87,17 @@ export default function (mockDir, options = {}) {
     throw(new Error('valid mockDir is missing'))
   }
   return (app) => {
-    if (Array.isArray(readFiles) && readFiles.length) {
-      const fileDirMap = getFileDirMap(readFiles)
-      const paths = Object.keys(fileDirMap)
-      paths.length && app.get(paths, fileReader.bind({ fileDirMap, options: opts }))
+    try {
+      if (Array.isArray(readFiles) && readFiles.length) {
+        const fileDirMap = getFileDirMap(readFiles)
+        const paths = Object.keys(fileDirMap)
+        paths.length && app.get(paths, fileReader.bind({ fileDirMap, options: opts }))
+      }
+      const workRequestHanlder = requestHanlder.bind({ options: opts })
+      app.use(routes, bodyParser.json(), bodyParser.urlencoded({ extended: false }), workRequestHanlder)
+      typeof appHanlder === 'function' && appHanlder(app, workRequestHanlder)
+    } catch (e) {
+      console.log(e)
     }
-    const workRequestHanlder = requestHanlder.bind({ options: opts })
-    app.use(routes, workRequestHanlder)
-    typeof appHanlder === 'function' && appHanlder(app, workRequestHanlder)
   }
 }
